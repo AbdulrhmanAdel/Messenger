@@ -1,6 +1,14 @@
+using Identity.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+#region Project Specific Services
+
+builder.Services.AddIdentityService(builder.Configuration);
+
+#endregion
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
