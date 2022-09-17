@@ -2,7 +2,9 @@
 
 public class EmptyApiResponse
 {
-    public static EmptyApiResponse Instance = new EmptyApiResponse();
+    public static readonly EmptyApiResponse Instance = new EmptyApiResponse();
+
+    public int? CustomErrorCode { get; set; }
     public bool IsSuccesses { get; set; }
     public IEnumerable<string> ErrorMessages { get; set; } = Array.Empty<string>();
 

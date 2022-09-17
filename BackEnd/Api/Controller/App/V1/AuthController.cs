@@ -31,6 +31,11 @@ public class AuthController : BaseAppV1Controller
         if (!validateResult.IsValid) return InvalidResult(validateResult.Errors.Select(m => m.ErrorMessage));
 
         var serviceResult = await _authService.RegisterAsync(registerDto);
+        HttpContext.Response.Cookies.Append("auth-key", Guid.NewGuid().ToString(), new CookieOptions()
+        {
+            Secure = true,
+            HttpOnly = true
+        });
         return serviceResult.Success ? ObjectResult(serviceResult.Data) : InvalidResult(serviceResult.Errors);
     }
 }

@@ -8,27 +8,30 @@ public class BaseApiController : ControllerBase
 {
     #region BadRequests
 
-    protected IActionResult InvalidResult()
+    protected IActionResult InvalidResult(int? customErrorCode = null)
     {
         return BadRequest(new EmptyApiResponse()
         {
-            IsSuccesses = false
+            IsSuccesses = false,
+            CustomErrorCode = customErrorCode
         });
     }
 
-    protected IActionResult InvalidResult(string error)
+    protected IActionResult InvalidResult(string error, int? customErrorCode = null)
     {
         return BadRequest(new EmptyApiResponse(error)
         {
-            IsSuccesses = false
+            IsSuccesses = false,
+            CustomErrorCode = customErrorCode
         });
     }
 
-    protected IActionResult InvalidResult(IEnumerable<string> errors)
+    protected IActionResult InvalidResult(IEnumerable<string> errors, int? customErrorCode = null)
     {
         return BadRequest(new EmptyApiResponse(errors)
         {
-            IsSuccesses = false
+            IsSuccesses = false,
+            CustomErrorCode = customErrorCode
         });
     }
 

@@ -5,6 +5,7 @@ using Core.Models.Shared.ServiceResult;
 using Core.Services.Identity.Auth;
 using Identity.Extensions;
 using Identity.Helpers;
+using Identity.Mappers.Auth;
 using Identity.Mongo.Constants;
 using MongoDB.Driver;
 
@@ -39,7 +40,8 @@ public class AuthService : BaseService, IAuthService
 
         return ReturnSuccess(new LoginResultModel()
         {
-            Token = tokenResultModel
+            UserDetails = user.ToUserDetailsModel(),
+            TokenDetails = tokenResultModel
         });
     }
 
@@ -68,7 +70,8 @@ public class AuthService : BaseService, IAuthService
 
         return ReturnSuccess(new LoginResultModel()
         {
-            Token = tokenResultModel
+            UserDetails = user.ToUserDetailsModel(),
+            TokenDetails = tokenResultModel
         });
     }
 }

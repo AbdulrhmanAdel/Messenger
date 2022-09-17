@@ -2,6 +2,6 @@
 
 public class LoginResultModel
 {
-    
-    public TokenResultModel Token { get; set; }
+    public UserDetailsModel UserDetails { get; set; }
+    public TokenResultModel TokenDetails { get; set; }
 }

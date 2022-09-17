@@ -1,0 +1,136 @@
+<div class="h-100vh d-flex justify-content-center align-items-center">
+  <div class="d-flex flex-column justify-content-center align-items-center">
+    <div *ngIf="hasError">Please Fix Error</div>
+    <form
+      [formGroup]="registerForm"
+      class="W-50 d-flex flex-column justify-content-center align-items-center"
+    >
+      <div class="d-flex justify-content-center align-items-center">
+        <mat-form-field class="m-i-e-1" appearance="outline">
+          <mat-label> First Name</mat-label>
+          <input matInput type="text" formControlName="firstName" />
+          <mat-error
+            *ngIf="
+            this.registerForm.controls['firstName'].hasError('required')
+          "
+          >Required Feild</mat-error
+          >
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label> Last Name</mat-label>
+          <input matInput type="text" formControlName="lastName" />
+          <mat-error
+          *ngIf="
+            this.registerForm.controls['lastName'].hasError('required')
+          "
+          >Required Feild</mat-error
+        >
+        </mat-form-field>
+      </div>
+
+      <mat-form-field class="w-100" appearance="outline">
+        <mat-label> Email</mat-label>
+        <input matInput type="text" formControlName="email" />
+        <mat-error
+          *ngIf="
+            this.registerForm.controls['email'].hasError('required')
+          "
+          >Required Feild</mat-error
+        >
+
+        <mat-error
+          *ngIf="
+            this.registerForm.controls['email'].hasError('email')
+          "
+        >Invalid Email Address</mat-error
+        >
+      </mat-form-field>
+
+      <mat-form-field class="w-100" appearance="outline">
+        <mat-label> Password</mat-label>
+        <input
+          #confirmPassword
+          [type]="'password'"
+          matInput
+          formControlName="password"
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="
+            confirmPassword.type =
+              confirmPassword.type == 'text' ? 'password' : 'text'
+          "
+        >
+          <mat-icon>{{
+            confirmPassword.type == "password" ? "visibility_off" : "visibility"
+          }}</mat-icon>
+        </button>
+        <mat-error></mat-error>
+        <mat-error
+          *ngIf="
+            this.registerForm.controls['confirmPassword'].hasError('required')
+          "
+          >Required Feild</mat-error
+        >
+      </mat-form-field>
+
+      <mat-form-field class="w-100" appearance="outline">
+        <mat-label> Confirm Password</mat-label>
+        <input
+          #password
+          [type]="'password'"
+          matInput
+          formControlName="confirmPassword"
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="
+            password.type = password.type == 'text' ? 'password' : 'text'
+          "
+        >
+          <mat-icon>{{
+            password.type == "password" ? "visibility_off" : "visibility"
+          }}</mat-icon>
+        </button>
+        <mat-error
+          *ngIf="
+            this.registerForm.controls['confirmPassword'].hasError('required')
+          "
+          >Required Feild</mat-error
+        >
+
+        <mat-error
+          *ngIf="
+            !this.registerForm.controls['confirmPassword'].hasError(
+              'required'
+            ) &&
+            this.registerForm.controls['confirmPassword'].hasError(
+              'invalidConfirmPassword'
+            )
+          "
+          >Password And Confirm Password Not The Same</mat-error
+        >
+      </mat-form-field>
+
+      <button
+        type="button"
+        mat-raised-button
+        color="primary"
+        (click)="register()"
+      >
+        Register
+      </button>
+    </form>
+
+    <hr />
+
+    <div>
+      <a href="auth/login" mat-raised-button color="accent"
+        >Has Account? Login</a
+      >
+    </div>
+  </div>
+</div>

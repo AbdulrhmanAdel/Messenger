@@ -1,0 +1,57 @@
+<div class="h-100vh d-flex justify-content-center align-items-center">
+  <div class="d-flex flex-column justify-content-center align-items-center">
+    <form
+      [formGroup]="loginForm"
+      class="d-flex flex-column justify-content-center align-items-center"
+    >
+      <div *ngIf="invalidCred">
+        Invalid Email Or Password, Please Try Again.
+      </div>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label> Email</mat-label>
+        <input matInput type="text" formControlName="email" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label> Password</mat-label>
+        <input
+          [type]="hidePassword ? 'password' : 'text'"
+          matInput
+          formControlName="password"
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="hidePassword = !hidePassword"
+          [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hidePassword"
+        >
+          <mat-icon>{{
+            hidePassword ? "visibility_off" : "visibility"
+          }}</mat-icon>
+        </button>
+        <mat-error></mat-error>
+      </mat-form-field>
+
+      <button
+        type="button"
+        mat-raised-button
+        color="primary"
+        [disabled]="isLoading"
+        (click)="login()"
+      >
+        Login
+      </button>
+    </form>
+
+    <hr />
+
+    <a
+      href="auth/register"
+      mat-raised-button
+      color="accent"
+      [disabled]="isLoading"
+      >Create New Account</a
+    >
+  </div>
+</div>
