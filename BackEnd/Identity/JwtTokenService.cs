@@ -25,13 +25,16 @@ public class JwtTokenService
     {
         var claims = new List<Claim>()
         {
-            new Claim(ClaimTypes.NameIdentifier, applicationUser.Id.ToString())
+            new Claim(ClaimTypes.NameIdentifier, applicationUser.Id.ToString()),
         };
 
         var expireAt = DateTime.UtcNow.AddMinutes(_jwtSettings.LifeTimeInMinutes);
         var jwtHandler = new JwtSecurityTokenHandler();
-        var securityToken = new JwtSecurityToken(_jwtSettings.Issuer, claims: claims,
-            expires: expireAt, signingCredentials: _credentials);
+        var securityToken = new JwtSecurityToken(_jwtSettings.Issuer,
+            audience: _jwtSettings.Audience,
+            claims: claims,
+            expires: expireAt,
+            signingCredentials: _credentials);
 
         return new TokenResultModel()
         {

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/auth/services/auth.service';
-import { catchError, Subject, takeUntil } from 'rxjs';
+import {catchError, Subject, switchMap, takeUntil} from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Store } from '@ngxs/store';
 import { AuthActions } from '../../../core/store/auth';
+import {Router} from "@angular/router";
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -16,12 +17,12 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
 
   invalidCred = false;
-  private _unsubscribe = new Subject<void>();
 
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private store: Store
+    private store: Store,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -35,6 +36,7 @@ export class LoginComponent implements OnInit {
       .subscribe(() => (this.invalidCred = false));
   }
 
+  private _unsubscribe = new Subject<void>();
   ngOnDestroy() {
     this._unsubscribe.next();
     this._unsubscribe.complete();
@@ -54,15 +56,18 @@ export class LoginComponent implements OnInit {
       })
       .pipe(
         takeUntil(this._unsubscribe),
+        switchMap(res => {
+          return this.store.dispatch(new AuthActions.UserLoggedIn(res.data));
+        }),
         catchError((err: HttpErrorResponse) => {
           this.isLoading = false;
           if (err.status) this.invalidCred = true;
           throw err;
         })
       )
-      .subscribe((response) => {
+      .subscribe(() => {
         this.isLoading = false;
-        this.store.dispatch(new AuthActions.UserLoggedIn(response.data));
+        this.router.navigateByUrl('');
       });
   }
 }

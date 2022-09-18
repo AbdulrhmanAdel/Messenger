@@ -7,6 +7,8 @@ import { ObjectResponseModel } from '../../shared/models/responses/object-respon
 import { UserAuthModel } from '../models/user-auth.model';
 
 const authUrlV1 = environment.hostUrl + '/App/V1/Auth';
+const userUrlV1 = environment.hostUrl + '/App/V1/User';
+
 @Injectable()
 export class AuthService {
   constructor(private httpClient: HttpClient) {}
@@ -24,8 +26,10 @@ export class AuthService {
     return this.httpClient.post<any>(authUrlV1 + '/Register', registerModel);
   }
 
-  isLoggedIn() {
-    return true;
+  loadUserData(): Observable<ObjectResponseModel<any>> {
+    return this.httpClient.get<ObjectResponseModel<any>>(
+      userUrlV1 + '/GetCurrentUserData'
+    );
   }
 
   getToken(): any {
@@ -35,5 +39,9 @@ export class AuthService {
 
   setToken(token: any) {
     localStorage.setItem('authTokenModel', JSON.stringify(token));
+  }
+
+  logOut() {
+    localStorage.removeItem('authTokenModel');
   }
 }

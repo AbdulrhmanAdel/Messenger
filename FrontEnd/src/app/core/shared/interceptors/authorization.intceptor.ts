@@ -30,7 +30,7 @@ export class AuthorizationInterceptor implements HttpInterceptor {
     if (token) {
       newReq = req.clone({
         setHeaders: {
-          authorization: token,
+          authorization: 'Bearer ' + token,
         },
       });
     }

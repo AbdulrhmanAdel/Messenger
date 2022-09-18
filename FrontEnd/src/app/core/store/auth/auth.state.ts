@@ -3,6 +3,7 @@ import { Action, NgxsOnInit, Select, State, StateContext } from '@ngxs/store';
 import { AuthService } from '../../auth/services/auth.service';
 import { AuthActions } from './auth.actions';
 import { AuthStateModel } from './auth-state.model';
+import { tap } from 'rxjs';
 
 @State<AuthStateModel>({
   name: 'auth',
@@ -20,6 +21,7 @@ export class AuthState implements NgxsOnInit {
         tokenDetails: tokenModel,
         isAuthenticated: true,
       }));
+      ctx.dispatch(new AuthActions.LoadUserData());
     }
   }
 
@@ -30,6 +32,27 @@ export class AuthState implements NgxsOnInit {
   ) {
     this.authService.setToken(action.data.tokenDetails);
     ctx.setState({ ...action.data, isAuthenticated: true });
+  }
+
+  @Action(AuthActions.LoggedOutRequested)
+  userLoggedOutRequested(ctx: StateContext<AuthStateModel>) {
+    this.authService.logOut();
+    ctx.setState({
+      isAuthenticated: false,
+      userDetails: null,
+      tokenDetails: null,
+    });
+  }
+
+  @Action(AuthActions.LoadUserData)
+  loadUserData(ctx: StateContext<AuthStateModel>) {
+    return this.authService.loadUserData().pipe(
+      tap((result) => {
+        if (result.data) {
+          ctx.setState((state) => ({ ...state, userDetails: result.data }));
+        }
+      })
+    );
   }
 
   @Action(AuthActions.UserRegistered)

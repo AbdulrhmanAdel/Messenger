@@ -1,9 +1,13 @@
+<div>
+  <button (click)="logout()"></button>
+</div>
 <div class="d-flex h-100vh">
   <div class="w-25">
     <p>Abdulrhman</p>
   </div>
   <div>
-
+    <input #inputElement>
+    <button (click)="send(inputElement.value)">Send</button>
   </div>
 </div>
 
