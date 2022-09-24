@@ -1,6 +1,7 @@
 using Api.Controller.App.V1.Hubs;
 using Api.Middlewares;
 using Identity.Extensions;
+using Persistance.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 #region Project Specific Services
 
-builder.Services.AddIdentityService(builder.Configuration);
 builder.Services.AddSignalR();
+builder.Services.AddIdentityService(builder.Configuration);
+builder.Services.AddPersistenceService();
 
 #endregion
 

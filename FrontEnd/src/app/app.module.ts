@@ -12,23 +12,53 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { NgxsModule } from '@ngxs/store';
 import { AuthState } from './core/store/auth/auth.state';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { MatInputModule } from '@angular/material/input';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { UserCoreModule } from './core/user/user-core.module';
+import { MatMenuModule } from '@angular/material/menu';
+import { SharedModule } from './pages/shared/shared.module';
+import { ConversationListComponent } from './pages/conversation/conversation-list/conversation-list.component';
+import { ConversationNamePipe } from './pages/conversation/pipes/conversation-name.pipe';
+import { ConversationViewComponent } from './pages/conversation/conversation-view/conversation-view.component';
+import { ConversationCoreModule } from './core/conversation/conversation-core.module';
+import { ErrorInterceptor } from './core/shared/interceptors/error.interceptor';
+import { ConversationState } from './core/store/conversations/conversation.state';
+import {MatIconModule} from "@angular/material/icon";
 
 @NgModule({
-  declarations: [AppComponent, BaseComponent],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    AuthCoreModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatSnackBarModule,
-    NgxsModule.forRoot([AuthState]),
-    NgxsReduxDevtoolsPluginModule.forRoot(),
+  declarations: [
+    AppComponent,
+    BaseComponent,
+    ConversationListComponent,
+    ConversationNamePipe,
+    ConversationViewComponent,
   ],
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        AuthCoreModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatSnackBarModule,
+        NgxsModule.forRoot([AuthState, ConversationState]),
+        NgxsReduxDevtoolsPluginModule.forRoot(),
+        MatInputModule,
+        MatAutocompleteModule,
+        UserCoreModule,
+        MatMenuModule,
+        SharedModule,
+        ConversationCoreModule,
+        MatIconModule,
+    ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthorizationInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
       multi: true,
     },
   ],

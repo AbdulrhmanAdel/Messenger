@@ -15,7 +15,7 @@ public class BaseService
         };
     }
 
-    public PagedServiceResult<T> ReturnSuccess<T>(T data, int totalCount)
+    public PagedServiceResult<T> ReturnSuccess<T>(IEnumerable<T> data, int totalCount)
     {
         return new PagedServiceResult<T>()
         {
@@ -24,22 +24,31 @@ public class BaseService
         };
     }
 
+    public PagedServiceResult<T> ReturnSuccess<T>(IEnumerable<T> data, long totalCount)
+    {
+        return new PagedServiceResult<T>()
+        {
+            Data = data,
+            TotalCount = (int) totalCount
+        };
+    }
+    
     public ServiceResultWithData<T> ReturnFailure<T>(string error, object data = null)
     {
-        return new PagedServiceResult<T>()
+        return new ServiceResultWithData<T>()
         {
             Errors = new List<string>() { error }
         };
     }
-    
-    public PagedServiceResult<T> ReturnFailure<T>(string error)
+
+    public PagedServiceResult<T> ReturnPagedFailure<T>(string error)
     {
         return new PagedServiceResult<T>()
         {
             Errors = new List<string>() { error }
         };
     }
-    
+
     public BaseServiceResult ReturnFailure(string error)
     {
         return new BaseServiceResult()

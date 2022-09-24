@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   hostUrl: 'https://localhost:5001',
+  appV1Url: 'https://localhost:5001/App/V1'
 };
 
 /*

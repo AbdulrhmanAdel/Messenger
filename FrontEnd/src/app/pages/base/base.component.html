@@ -1,14 +1,48 @@
-<div>
-  <button (click)="logout()"></button>
-</div>
 <div class="d-flex h-100vh">
-  <div class="w-25">
-    <p>Abdulrhman</p>
+  <div class="d-flex flex-column w-25 px-2">
+    <div class="my-2">
+      <img
+        class="user-settings"
+        appProfileImage
+        circular
+        [matMenuTriggerFor]="menu"
+      />
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="logout()">Log Out</button>
+      </mat-menu>
+    </div>
+    <div class="my-1">
+      <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label>Search Users</mat-label>
+        <input
+          type="text"
+          placeholder="Pick one"
+          aria-label="Number"
+          matInput
+          [matAutocomplete]="auto"
+        />
+        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+          <mat-option
+            *ngFor="let option of searchUserResult"
+            [value]="option.id"
+          >
+            {{ option.firstName + option.lastName }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+    <app-conversation-list
+      (selectedConversation)="conversation = $event"
+    ></app-conversation-list>
   </div>
-  <div>
-    <input #inputElement>
-    <button (click)="send(inputElement.value)">Send</button>
+  <div class="w-50">
+    <app-conversation-view
+      *ngIf="conversation"
+      [conversationModel]="conversation"
+    ></app-conversation-view>
   </div>
+  <!--  <div class="w-25">-->
+  <!--    <input #inputElement />-->
+  <!--    <button (click)="send(inputElement.value)">Send</button>-->
+  <!--  </div>-->
 </div>
-
-

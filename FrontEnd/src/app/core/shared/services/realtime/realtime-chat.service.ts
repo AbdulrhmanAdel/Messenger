@@ -1,47 +1,49 @@
 ﻿import { Injectable } from '@angular/core';
-import {
-  HubConnection,
-  HubConnectionBuilder,
-} from '@microsoft/signalr';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { environment } from '../../../../../environments/environment';
 import { Store } from '@ngxs/store';
 import { AuthState } from '../../../store/auth/auth.state';
-import { Subject } from 'rxjs';
+import { Observable, Subject, take } from 'rxjs';
+
+export interface Message {
+  conversationId: string;
+  senderId: string;
+  message: string;
+  mediaUrls?: { url: string; type: number }[];
+}
 
 const hostUrl = environment.hostUrl;
 @Injectable({
   providedIn: 'root',
 })
 export class RealtimeChatService {
-  private messages$ = new Subject<void>();
-  private hub: HubConnection;
+  messages$: Observable<Message>;
+  private messagesSubject = new Subject<Message>();
 
-  constructor(private store: Store) {}
+  private hub: HubConnection;
+  constructor(private store: Store) {
+    this.messages$ = this.messagesSubject;
+  }
+
   async connect() {
     if (this.hub) {
       return;
     }
 
     const token = this.store.selectSnapshot(AuthState.userAccessToken);
-    console.log(token);
     this.hub = new HubConnectionBuilder()
       .withUrl(hostUrl + '/chat', {
         accessTokenFactory: () => (token ? token : ''),
       })
       .build();
 
-    this.hub.start().then(console.log).catch(console.log);
-    this.hub.on('newMessage', (data) => {
-      console.log(data);
+    await this.hub.start();
+    this.hub.on('newMessage', (data: Message) => {
+      this.messagesSubject.next(data);
     });
   }
 
-  async send(to: string, data: any) {
-    const id = this.store.selectSnapshot(state => state.auth.userDetails.id);
-    await this.hub.send(
-      'SendMessage',
-      id,
-      data
-    );
+  async disconnect() {
+    await this.hub.stop();
   }
 }

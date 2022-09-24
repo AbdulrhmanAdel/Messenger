@@ -53,9 +53,12 @@ public class AuthService : BaseService, IAuthService
         if (isCredentialExists)
             return ReturnFailure<LoginResultModel>("Invalid Credential");
 
+        var currentTime = DateTime.UtcNow;
         var user = new ApplicationUser()
         {
             Id = Guid.NewGuid(),
+            Created = currentTime,
+            Edited = currentTime,
             Email = registerDto.Credential,
             Password = PasswordHasher.HashPassword(registerDto.Password),
             FirstName = registerDto.FirstName,

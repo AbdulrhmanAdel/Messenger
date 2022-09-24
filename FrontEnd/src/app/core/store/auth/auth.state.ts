@@ -49,7 +49,7 @@ export class AuthState implements NgxsOnInit {
     return this.authService.loadUserData().pipe(
       tap((result) => {
         if (result.data) {
-          ctx.setState((state) => ({ ...state, userDetails: result.data }));
+          ctx.setState({ ...ctx.getState(), userDetails: result.data });
         }
       })
     );
@@ -72,5 +72,10 @@ export class AuthState implements NgxsOnInit {
   @Select()
   static isAuthenticated(state: { auth: AuthStateModel }) {
     return !!state?.auth?.isAuthenticated;
+  }
+
+  @Select()
+  static loggedInUserData(state: { auth: AuthStateModel }) {
+    return state?.auth?.userDetails;
   }
 }

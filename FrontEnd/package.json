@@ -22,6 +22,7 @@
     "@angular/router": "~13.2.0",
     "@microsoft/signalr": "^6.0.9",
     "@ngxs/store": "^3.7.5",
+    "immer": "^9.0.15",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

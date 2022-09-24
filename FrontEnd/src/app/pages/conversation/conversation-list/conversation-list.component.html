@@ -1,0 +1,38 @@
+<div class="w-100">
+  <div
+    class="conversation-item my-2 w-100"
+    [ngClass]="
+      conversation == currentActiveConversation ? 'conversation-active' : ''
+    "
+    *ngFor="let conversation of conversations$ | async"
+    (click)="conversationClicked(conversation)"
+  >
+    <div
+      class="d-flex justify-content-start align-items-start"
+      *ngIf="conversation.conversationType == 0; else groupChat"
+    >
+      <img
+        *ngIf="conversation.conversationType == 0"
+        appProfileImage
+        circular
+      />
+      <div
+        class="m-i-s-1 d-flex flex-column justify-content-between align-items-start"
+      >
+        <div class="conversation-name fw-semibold">
+          {{
+            conversation.participants
+              | conversationName: conversation.conversationType:loggedInUser.id
+          }}
+        </div>
+
+        <div class="conversation-last-message">
+          {{ conversation.lastMessage }}
+        </div>
+        <div></div>
+      </div>
+    </div>
+
+    <ng-template #groupChat> </ng-template>
+  </div>
+</div>

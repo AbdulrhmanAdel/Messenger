@@ -11,14 +11,13 @@ import { Injectable, NgZone } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store } from '@ngxs/store';
 import { AuthState } from '../../store/auth/auth.state';
+import { AuthActions } from '../../store/auth';
 
 @Injectable()
 export class AuthorizationInterceptor implements HttpInterceptor {
   constructor(
     private authService: AuthService,
-    private store: Store,
-    private ngZone: NgZone,
-    private snakeBar: MatSnackBar
+    private store: Store
   ) {}
 
   intercept(
@@ -35,36 +34,6 @@ export class AuthorizationInterceptor implements HttpInterceptor {
       });
     }
 
-    return next.handle(newReq).pipe(
-      catchError((err: HttpErrorResponse) => {
-        let message = '';
-
-        switch (err.status) {
-          case 0: {
-            message = `Can't connect to server`;
-            break;
-          }
-
-          case 500: {
-            message = 'Server error: ';
-            message +=
-              err.error.errorMessages && err.error.errorMessages.length
-                ? err.error.errorMessages[0]
-                : '';
-            break;
-          }
-        }
-
-        if (message) {
-          this.ngZone.run(() =>
-            this.snakeBar.open(message, 'close', {
-              duration: 5000,
-            })
-          );
-        }
-
-        throw err;
-      })
-    );
+    return next.handle(newReq);
   }
 }

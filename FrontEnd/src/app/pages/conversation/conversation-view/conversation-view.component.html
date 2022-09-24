@@ -1,0 +1,36 @@
+<div class="conversation-view-container">
+  <div class="conversation-details-container">
+    <div class="">
+      {{
+        conversationModel.name ??
+          conversationModel.participants[0].nickName ??
+          conversationModel.participants[0].firstName
+      }}
+    </div>
+  </div>
+  <div class="conversation-messages-container">
+    <div
+      *ngFor="let conversationMessage of conversationData"
+      class="d-flex"
+      [ngClass]="
+        conversationMessage.senderId === loggedInUser.id
+          ? 'sent-message'
+          : 'received-message'
+      "
+    >
+      <p class="message-text">{{ conversationMessage.message }}</p>
+    </div>
+  </div>
+  <div class="send-message-container">
+    <input
+      class="send-message flex-grow-1"
+      type="text"
+      placeholder="Aa"
+      #message
+    />
+
+    <mat-icon (click)="sendMessage(message.value); message.value = ''"
+      >send</mat-icon
+    >
+  </div>
+</div>
