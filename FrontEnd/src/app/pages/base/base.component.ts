@@ -13,6 +13,8 @@ import { ConversationModel } from '../../core/conversation';
   styleUrls: ['./base.component.scss'],
 })
 export class BaseComponent implements OnInit, OnDestroy {
+  searchFocused: boolean;
+
   searchUserResult: any[];
   conversation: ConversationModel;
 
@@ -24,6 +26,7 @@ export class BaseComponent implements OnInit, OnDestroy {
   ) {}
 
   private _unsubscribe = new Subject<void>();
+
   async ngOnInit(): Promise<void> {
     await this.chatService.connect();
 
@@ -51,5 +54,9 @@ export class BaseComponent implements OnInit, OnDestroy {
       .dispatch(new AuthActions.LoggedOutRequested())
       .pipe(takeUntil(this._unsubscribe))
       .subscribe(() => this.router.navigateByUrl('auth/login'));
+  }
+
+  log($event: FocusEvent) {
+    console.log($event);
   }
 }

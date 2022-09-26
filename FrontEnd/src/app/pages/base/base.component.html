@@ -1,5 +1,5 @@
-<div class="d-flex h-100vh">
-  <div class="d-flex flex-column w-25 px-2">
+<div class="d-flex h-100vh" (focus)="log($event); searchFocused = false">
+  <div class="d-flex flex-column px-2">
     <div class="my-2">
       <img
         class="user-settings"
@@ -12,26 +12,15 @@
       </mat-menu>
     </div>
     <div class="my-1">
-      <mat-form-field class="example-full-width" appearance="fill">
-        <mat-label>Search Users</mat-label>
-        <input
-          type="text"
-          placeholder="Pick one"
-          aria-label="Number"
-          matInput
-          [matAutocomplete]="auto"
-        />
-        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-          <mat-option
-            *ngFor="let option of searchUserResult"
-            [value]="option.id"
-          >
-            {{ option.firstName + option.lastName }}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
+      <input
+        id="search"
+        (focus)="searchFocused = true"
+        (blur)="searchFocused = false"
+      />
     </div>
+    <div *ngIf="searchFocused"></div>
     <app-conversation-list
+      [hideConversations]="searchFocused"
       (selectedConversation)="conversation = $event"
     ></app-conversation-list>
   </div>

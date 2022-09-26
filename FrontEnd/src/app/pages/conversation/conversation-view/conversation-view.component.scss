@@ -12,6 +12,8 @@
   width: 100%;
   padding: 5px;
   border-bottom: 1px solid gray;
+  display: flex;
+  align-items: end;
 }
 
 .conversation-messages-container {
@@ -49,6 +51,6 @@
   outline: none;
   border: none;
   border-radius: 20px;
-  background-color: #F3F3F5;
+  background-color: #f3f3f5;
   padding: 5px;
 }

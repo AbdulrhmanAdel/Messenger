@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { Observable, Subject, takeUntil, tap } from 'rxjs';
 import { UserService } from '../../../core/user/user.service';
 import { Select, Store } from '@ngxs/store';
@@ -12,6 +12,7 @@ import { ConversationActions } from '../../../core/store/conversations/conversat
   styleUrls: ['./conversation-list.component.scss'],
 })
 export class ConversationListComponent implements OnInit {
+  @Input() hideConversations: boolean;
   @Output() selectedConversation = new EventEmitter<ConversationModel>();
   currentActiveConversation: ConversationModel;
 
@@ -46,6 +47,12 @@ export class ConversationListComponent implements OnInit {
   }
 
   conversationClicked(conversation: ConversationModel) {
+    if (
+      this.currentActiveConversation &&
+      this.currentActiveConversation.id == conversation.id
+    )
+      return;
+
     this.selectedConversation.emit(conversation);
     this.currentActiveConversation.active = false;
     this.currentActiveConversation = conversation;

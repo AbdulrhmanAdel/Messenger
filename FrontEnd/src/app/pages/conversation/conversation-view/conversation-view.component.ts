@@ -1,10 +1,18 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { MessageService } from '../../../core/conversation/services/message.service';
 import { Store } from '@ngxs/store';
 import { Subject, takeUntil, tap } from 'rxjs';
 import { RealtimeChatService } from '../../../core/shared/services/realtime/realtime-chat.service';
 import { AuthState } from '../../../core/store/auth/auth.state';
 import { ConversationModel } from '../../../core/conversation';
+import { ConversationActions } from '../../../core/store/conversations/conversation.actions';
 
 @Component({
   selector: 'app-conversation-view',
@@ -12,17 +20,29 @@ import { ConversationModel } from '../../../core/conversation';
   styleUrls: ['./conversation-view.component.scss'],
 })
 export class ConversationViewComponent implements OnInit {
-  @Input() conversationModel: ConversationModel;
+  selectedConversationModel: ConversationModel;
+  @Input() set conversationModel(value: ConversationModel) {
+    if (
+      this.selectedConversationModel &&
+      this.selectedConversationModel.id == value.id
+    ) {
+      return;
+    }
+
+    this.selectedConversationModel = value;
+    this.refreshMessages();
+  }
 
   loggedInUser: any;
   messages: string[];
   conversationData: { message?: string; senderId: string }[];
 
+  @ViewChild('messageContainer') messageContainer: ElementRef;
   private _unsubscribe = new Subject<void>();
   constructor(
     private store: Store,
-    private messageService: MessageService,
-    private chatService: RealtimeChatService
+    private renderer: Renderer2,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -34,39 +54,42 @@ export class ConversationViewComponent implements OnInit {
       )
       .subscribe();
 
+    this.refreshMessages();
+  }
+
+  refreshMessages() {
     this.messageService
       .getPagedList({
-        conversationId: this.conversationModel.id,
+        conversationId: this.selectedConversationModel.id,
         pageSize: 30,
         currentPage: 1,
       })
       .pipe(
         tap((result) => {
           this.conversationData = result.data;
-        })
-      )
-      .subscribe();
 
-    this.chatService.messages$
-      .pipe(
-        tap((result) => {
-          this.conversationData.push(result);
+          // Wait till dom updated with messages
+          setTimeout(() => {
+            this.renderer.setProperty(
+              this.messageContainer.nativeElement,
+              'scrollTop',
+              this.messageContainer.nativeElement.scrollHeight
+            );
+          });
         })
       )
       .subscribe();
   }
 
   sendMessage(message: string) {
-    this.messageService
-      .sendMessage({
-        conversationId: this.conversationModel.id,
+    if (!message) return;
+
+    this.store.dispatch(
+      new ConversationActions.SendNewConversationMessage({
+        conversationId: this.selectedConversationModel.id,
         message,
       })
-      .subscribe();
-
-    this.conversationData.push({
-      message: message,
-      senderId: this.loggedInUser.id,
-    });
+    );
   }
+
 }

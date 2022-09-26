@@ -1,18 +1,42 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {ConversationParticipantModel} from "../../../core/conversation";
+import {
+  ConversationModel,
+  ConversationParticipantModel,
+} from '../../../core/conversation';
 
 @Pipe({
-  name: 'conversationName',
+  name: 'resolveConversationName',
 })
-export class ConversationNamePipe implements PipeTransform {
-  transform(value: ConversationParticipantModel[], type: number, loggedInUserId: string): unknown {
-    const excludeLoggedInUser = value.filter((p) => p.id != loggedInUserId);
+export class ResolveConversationNamePipe implements PipeTransform {
+  transform(
+    conversationModel: ConversationModel,
+    loggedInUserId: string
+  ): unknown {
+    const excludeLoggedInUser = conversationModel.participants.filter(
+      (p) => p.id != loggedInUserId
+    );
 
-    if (type == 0) {
+    // Private Conversation
+    if (conversationModel.conversationType == 0) {
       const targetUser = excludeLoggedInUser[0];
-      return targetUser.firstName + ' ' + targetUser.lastName;
+      return this.getParticipantConversationName(targetUser);
     }
 
-    return 'group';
+    // Group Conversation
+    return (
+      conversationModel.name ??
+      excludeLoggedInUser
+        .slice(0, 3)
+        .map(this.getParticipantConversationName)
+        .join(', ')
+    );
+  }
+
+  private getParticipantConversationName(
+    targetUser: ConversationParticipantModel
+  ) {
+    return (
+      targetUser.nickName ?? targetUser.firstName + ' ' + targetUser.lastName
+    );
   }
 }

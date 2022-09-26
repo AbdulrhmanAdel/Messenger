@@ -1,4 +1,4 @@
-<div class="w-100">
+<div class="w-100" [style.display]="hideConversations ? 'none' : 'block'">
   <div
     class="conversation-item my-2 w-100"
     [ngClass]="
@@ -19,11 +19,8 @@
       <div
         class="m-i-s-1 d-flex flex-column justify-content-between align-items-start"
       >
-        <div class="conversation-name fw-semibold">
-          {{
-            conversation.participants
-              | conversationName: conversation.conversationType:loggedInUser.id
-          }}
+        <div class="conversation-name">
+          {{ conversation | resolveConversationName: loggedInUser.id }}
         </div>
 
         <div class="conversation-last-message">

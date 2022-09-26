@@ -1,11 +1,34 @@
 ﻿import { Injectable } from '@angular/core';
-import { Action, Select, State, StateContext } from '@ngxs/store';
+import { Action, State, StateContext } from '@ngxs/store';
 import { ConversationActions } from './conversation.actions';
 import { ConversationStateModel } from './conversation.state.model';
 import { ConversationService } from '../../conversation/services/conversation.service';
 import { tap } from 'rxjs';
 import produce from 'immer';
+import { MessageService } from '../../conversation/services/message.service';
+import { sortBy } from 'lodash';
 
+const sendNewMessageHandler = (
+  state: ConversationStateModel,
+  action: ConversationActions.SendNewConversationMessage
+): ConversationStateModel => {
+  return produce(state, (draft) => {
+    const targetConversation = draft.conversationList.find(
+      (m) => m.id == action.conversationMessage.conversationId
+    );
+
+    // Load Conversation Data
+    if (targetConversation) {
+      const newList = sortBy(draft.conversationList, (p) =>
+        p.id === action.conversationMessage.conversationId ? 0 : 1
+      );
+      newList[0].lastMessage = action.conversationMessage.message;
+      return;
+    }
+
+    // Attach it to the start of it
+  });
+};
 @State<ConversationStateModel>({
   name: 'conversations',
   defaults: {
@@ -17,7 +40,11 @@ import produce from 'immer';
 })
 @Injectable()
 export class ConversationState {
-  constructor(private conversationService: ConversationService) {}
+  constructor(
+    private conversationService: ConversationService,
+    private messageService: MessageService
+  ) {}
+
   @Action(ConversationActions.LoadNextConversationPage)
   loadConversationPage(
     ctx: StateContext<ConversationStateModel>,
@@ -43,5 +70,18 @@ export class ConversationState {
           ctx.setState(newState);
         })
       );
+  }
+
+  @Action(ConversationActions.SendNewConversationMessage)
+  sendMessageToConversation(
+    ctx: StateContext<ConversationStateModel>,
+    action: ConversationActions.SendNewConversationMessage
+  ) {
+    return this.messageService.sendMessage(action.conversationMessage).pipe(
+      tap((result) => {
+        const newState = sendNewMessageHandler(ctx.getState(), action);
+        ctx.setState(newState);
+      })
+    );
   }
 }
