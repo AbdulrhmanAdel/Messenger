@@ -3,27 +3,16 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { environment } from '../../../../../environments/environment';
 import { Store } from '@ngxs/store';
 import { AuthState } from '../../../store/auth/auth.state';
-import { Observable, Subject, take } from 'rxjs';
-
-export interface Message {
-  conversationId: string;
-  senderId: string;
-  message: string;
-  mediaUrls?: { url: string; type: number }[];
-}
+import { ConversationActions } from '../../../store/conversations/conversation.actions';
+import { ConversationMessage } from '../../../conversation';
 
 const hostUrl = environment.hostUrl;
 @Injectable({
   providedIn: 'root',
 })
 export class RealtimeChatService {
-  messages$: Observable<Message>;
-  private messagesSubject = new Subject<Message>();
-
   private hub: HubConnection;
-  constructor(private store: Store) {
-    this.messages$ = this.messagesSubject;
-  }
+  constructor(private store: Store) {}
 
   async connect() {
     if (this.hub) {
@@ -38,8 +27,10 @@ export class RealtimeChatService {
       .build();
 
     await this.hub.start();
-    this.hub.on('newMessage', (data: Message) => {
-      this.messagesSubject.next(data);
+    this.hub.on('newMessage', (data: ConversationMessage) => {
+      this.store.dispatch(
+        new ConversationActions.NewConversationMessageReceived(data)
+      );
     });
   }
 

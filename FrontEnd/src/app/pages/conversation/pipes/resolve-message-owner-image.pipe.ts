@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ConversationModel } from '../../../core/conversation';
+import {  } from '../../../core/conversation';
+import {ConversationModel} from "../../../core/conversation/models/conversation.model";
 
 @Pipe({
   name: 'resolveMessageOwnerImage',

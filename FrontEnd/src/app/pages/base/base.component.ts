@@ -18,14 +18,13 @@ export class BaseComponent implements OnInit, OnDestroy {
   searchUserResult: any[];
   conversation: ConversationModel;
 
+  private _unsubscribe = new Subject<void>();
   constructor(
     public chatService: RealtimeChatService,
     private store: Store,
     private router: Router,
     private userService: UserService
   ) {}
-
-  private _unsubscribe = new Subject<void>();
 
   async ngOnInit(): Promise<void> {
     await this.chatService.connect();
@@ -45,18 +44,10 @@ export class BaseComponent implements OnInit, OnDestroy {
     this._unsubscribe.complete();
   }
 
-  send(value: string) {
-    // this.chatService.send('', value);
-  }
-
   logout() {
     this.store
       .dispatch(new AuthActions.LoggedOutRequested())
       .pipe(takeUntil(this._unsubscribe))
       .subscribe(() => this.router.navigateByUrl('auth/login'));
-  }
-
-  log($event: FocusEvent) {
-    console.log($event);
   }
 }

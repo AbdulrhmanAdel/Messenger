@@ -1,2 +1,4 @@
-﻿export * from './models/conversation.model';
-export * from './models/conversation-participant.model';
+﻿export * from './models';
+
+export * from './services/conversation.service';
+export * from './services/message.service';

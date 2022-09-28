@@ -29,6 +29,7 @@ const sendNewMessageHandler = (
     // Attach it to the start of it
   });
 };
+
 @State<ConversationStateModel>({
   name: 'conversations',
   defaults: {
@@ -57,17 +58,12 @@ export class ConversationState {
       })
       .pipe(
         tap((result) => {
-          const state = ctx.getState();
-          const newState = produce(state, (draft) => {
-            draft.hasMoreData =
-              action.query.currentPage * action.query.pageSize <
-              result.totalCount;
-            // draft.currentPage = currentPage;
-            // draft.pageSize = pageSize;
-            draft.conversationList.push(...result.data);
-          });
-
-          ctx.setState(newState);
+          ctx.setState(
+            produce((draft) => {
+              draft.hasMoreData = action.query.currentPage * action.query.pageSize < result.totalCount;
+              draft.conversationList.push(...result.data);
+            })
+          );
         })
       );
   }

@@ -9,7 +9,6 @@ import {
 import { MessageService } from '../../../core/conversation/services/message.service';
 import { Store } from '@ngxs/store';
 import { Subject, takeUntil, tap } from 'rxjs';
-import { RealtimeChatService } from '../../../core/shared/services/realtime/realtime-chat.service';
 import { AuthState } from '../../../core/store/auth/auth.state';
 import { ConversationModel } from '../../../core/conversation';
 import { ConversationActions } from '../../../core/store/conversations/conversation.actions';
@@ -20,8 +19,10 @@ import { ConversationActions } from '../../../core/store/conversations/conversat
   styleUrls: ['./conversation-view.component.scss'],
 })
 export class ConversationViewComponent implements OnInit {
+  isConversationStarted: boolean = false;
   selectedConversationModel: ConversationModel;
   @Input() set conversationModel(value: ConversationModel) {
+    this.isConversationStarted = true;
     if (
       this.selectedConversationModel &&
       this.selectedConversationModel.id == value.id
@@ -91,5 +92,4 @@ export class ConversationViewComponent implements OnInit {
       })
     );
   }
-
 }

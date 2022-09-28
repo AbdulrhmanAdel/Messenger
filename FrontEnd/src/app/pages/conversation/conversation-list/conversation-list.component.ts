@@ -1,10 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable, Subject, takeUntil, tap } from 'rxjs';
 import { UserService } from '../../../core/user/user.service';
 import { Select, Store } from '@ngxs/store';
 import { AuthState } from '../../../core/store/auth/auth.state';
 import { ConversationModel } from '../../../core/conversation';
 import { ConversationActions } from '../../../core/store/conversations/conversation.actions';
+import { PagedQueryV1Model } from '../../../core/shared/models/requests/paged-query-v1.model';
 
 @Component({
   selector: 'app-conversation-list',
@@ -19,6 +20,8 @@ export class ConversationListComponent implements OnInit {
   // Store
   @Select((state) => state.conversations.conversationList)
   conversations$: Observable<ConversationModel[]>;
+  @Select((state) => state.conversations.hasMoreData)
+  hasMoreConversations$: Observable<boolean>;
 
   loggedInUser: any;
   private _unsubscribe = new Subject<void>();
@@ -33,12 +36,27 @@ export class ConversationListComponent implements OnInit {
       )
       .subscribe();
 
+    this.loadConversations();
+  }
+
+  loadConversations() {
     this.store.dispatch(
-      new ConversationActions.LoadNextConversationPage({
-        currentPage: 1,
-        pageSize: 10,
-      })
+      new ConversationActions.LoadNextConversationPage(this.prepareQuery())
     );
+  }
+
+  currentPage = 1;
+  pageSize = 1;
+  loadNextPage() {
+    this.currentPage += 1;
+    this.loadConversations();
+  }
+
+  prepareQuery(): PagedQueryV1Model {
+    return new PagedQueryV1Model({
+      currentPage: this.currentPage,
+      pageSize: this.pageSize,
+    });
   }
 
   ngOnDestroy() {

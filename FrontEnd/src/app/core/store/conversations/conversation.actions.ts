@@ -1,4 +1,5 @@
 ﻿import { PagedQueryV1Model } from '../../shared/models/requests/paged-query-v1.model';
+import { ConversationMessage } from '../../conversation';
 
 export namespace ConversationActions {
   export class LoadNextConversationPage {
@@ -14,5 +15,10 @@ export namespace ConversationActions {
         message: string;
       }
     ) {}
+  }
+
+  export class NewConversationMessageReceived {
+    public static readonly type: string = '[Conversation] Message Received';
+    constructor(public conversationMessage: ConversationMessage) {}
   }
 }

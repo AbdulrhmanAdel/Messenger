@@ -9,7 +9,7 @@
   >
     <div
       class="d-flex justify-content-start align-items-start"
-      *ngIf="conversation.conversationType == 0; else groupChat"
+      *ngIf="conversation.conversationType == 0"
     >
       <img
         *ngIf="conversation.conversationType == 0"
@@ -29,7 +29,8 @@
         <div></div>
       </div>
     </div>
-
-    <ng-template #groupChat> </ng-template>
   </div>
+  <button *ngIf="hasMoreConversations$ | async" (click)="loadNextPage()">
+    Load More
+  </button>
 </div>
