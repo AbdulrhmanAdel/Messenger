@@ -1,4 +1,5 @@
 ﻿using Api.Controller.App.V1.Hubs;
+using Api.Extensions.Conversations;
 using Core.Abstractions;
 using Core.Dtos.Conversation.Messages;
 using Core.Models.Conversations;
@@ -16,7 +17,8 @@ public class MessageController : BaseAppV1Controller
     private readonly IMessageService _messageService;
     private readonly ICurrentUserContext _currentUserContext;
 
-    public MessageController(IHubContext<ChatHub> hub, IMessageService messageService, ICurrentUserContext currentUserContext)
+    public MessageController(IHubContext<ChatHub> hub, IMessageService messageService,
+        ICurrentUserContext currentUserContext)
     {
         _hub = hub;
         _messageService = messageService;
@@ -39,13 +41,12 @@ public class MessageController : BaseAppV1Controller
             return InvalidResult(message.Errors);
         }
 
-        await _hub.Clients.Users(message.Data.MessageTargets.Select(m => m.ToString()))
-            .SendCoreAsync("newMessage", new object?[] { new
-            {
-                conversationId = postMessageDto.ConversationId,
-                senderId = _currentUserContext.UserId,
-                message = message.Data.Message
-            }});
+        await _hub.SendMessageAsync(message.Data.MessageTargets.Select(m => m.ToString()), new
+        {
+            conversationId = postMessageDto.ConversationId,
+            senderId = _currentUserContext.UserId,
+            message = message.Data.Message
+        });
 
         return EmptyResult();
     }

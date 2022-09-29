@@ -1,49 +1,30 @@
 ﻿import { Injectable } from '@angular/core';
 import { Action, State, StateContext } from '@ngxs/store';
 import { ConversationActions } from './conversation.actions';
-import { ConversationStateModel } from './conversation.state.model';
-import { ConversationService } from '../../conversation/services/conversation.service';
-import { tap } from 'rxjs';
+import {
+  ConversationStateModel,
+  DEFAULT_CONVERSATION_STATE,
+} from './conversation.state.model';
+import { map, Observable, of, switchMap, tap } from 'rxjs';
 import produce from 'immer';
-import { MessageService } from '../../conversation/services/message.service';
+import {
+  MessageService,
+  ConversationService,
+  ConversationModel,
+} from '../../conversation';
 import { sortBy } from 'lodash';
-
-const sendNewMessageHandler = (
-  state: ConversationStateModel,
-  action: ConversationActions.SendNewConversationMessage
-): ConversationStateModel => {
-  return produce(state, (draft) => {
-    const targetConversation = draft.conversationList.find(
-      (m) => m.id == action.conversationMessage.conversationId
-    );
-
-    // Load Conversation Data
-    if (targetConversation) {
-      const newList = sortBy(draft.conversationList, (p) =>
-        p.id === action.conversationMessage.conversationId ? 0 : 1
-      );
-      newList[0].lastMessage = action.conversationMessage.message;
-      return;
-    }
-
-    // Attach it to the start of it
-  });
-};
+import { AudioPlayerService } from '../../shared/services/audio-player.service';
 
 @State<ConversationStateModel>({
   name: 'conversations',
-  defaults: {
-    conversationList: [],
-    currentPage: 1,
-    hasMoreData: true,
-    pageSize: 10,
-  },
+  defaults: DEFAULT_CONVERSATION_STATE,
 })
 @Injectable()
 export class ConversationState {
   constructor(
     private conversationService: ConversationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private audio: AudioPlayerService
   ) {}
 
   @Action(ConversationActions.LoadNextConversationPage)
@@ -52,7 +33,7 @@ export class ConversationState {
     action: ConversationActions.LoadNextConversationPage
   ) {
     return this.conversationService
-      .getConversation({
+      .getPagedList({
         currentPage: action.query.currentPage,
         pageSize: action.query.pageSize,
       })
@@ -60,8 +41,12 @@ export class ConversationState {
         tap((result) => {
           ctx.setState(
             produce((draft) => {
-              draft.hasMoreData = action.query.currentPage * action.query.pageSize < result.totalCount;
-              draft.conversationList.push(...result.data);
+              draft.hasMoreData =
+                action.query.currentPage * action.query.pageSize <
+                result.totalCount;
+              draft.conversationList.push(
+                ...result.data.map((c) => new ConversationModel(c))
+              );
             })
           );
         })
@@ -69,15 +54,83 @@ export class ConversationState {
   }
 
   @Action(ConversationActions.SendNewConversationMessage)
-  sendMessageToConversation(
+  sendMessage(
     ctx: StateContext<ConversationStateModel>,
     action: ConversationActions.SendNewConversationMessage
   ) {
     return this.messageService.sendMessage(action.conversationMessage).pipe(
-      tap((result) => {
-        const newState = sendNewMessageHandler(ctx.getState(), action);
-        ctx.setState(newState);
-      })
+      switchMap((result): Observable<any> => {
+        const currentState = ctx.getState();
+        const targetConversation = currentState.conversationList.find(
+          (m) => m.id == action.conversationMessage.conversationId
+        );
+
+        if (targetConversation) {
+          return of({ targetConversation, requestedFromServer: false });
+        }
+
+        return this.conversationService
+          .getById(action.conversationMessage.conversationId)
+          .pipe(
+            map((getByIdResult) => ({
+              targetConversation: new ConversationModel(getByIdResult.data),
+              requestedFromServer: true,
+            }))
+          );
+      }),
+      tap(this.handleNewConversationMessage(ctx, action.conversationMessage))
     );
+  }
+
+  @Action(ConversationActions.NewConversationMessageReceived)
+  messageReceived(
+    ctx: StateContext<ConversationStateModel>,
+    action: ConversationActions.NewConversationMessageReceived
+  ) {
+    const currentState = ctx.getState();
+    const targetConversation = currentState.conversationList.find(
+      (m) => m.id == action.conversationMessage.conversationId
+    );
+
+    let conversation$: Observable<any>;
+    if (targetConversation) {
+      conversation$ = of({ targetConversation, requestedFromServer: false });
+    } else {
+      conversation$ = this.conversationService
+        .getById(action.conversationMessage.conversationId)
+        .pipe(
+          map((getByIdResult) => ({
+            targetConversation: new ConversationModel(getByIdResult.data),
+            requestedFromServer: true,
+          }))
+        );
+    }
+
+    return conversation$.pipe(
+      tap(this.handleNewConversationMessage(ctx, action.conversationMessage)),
+      tap(() => this.audio.play())
+    );
+  }
+
+  private handleNewConversationMessage(
+    ctx: StateContext<ConversationStateModel>,
+    message: { message?: string; mediaUrl?: any[] }
+  ) {
+    return (result) =>
+      ctx.setState(
+        produce((draft) => {
+          if (result.requestedFromServer) {
+            draft.conversationList.unshift(result.targetConversation);
+          } else {
+            draft.conversationList = sortBy(draft.conversationList, (p) =>
+              p.id === result.targetConversation.id ? 0 : 1
+            );
+            draft.conversationList[0].lastMessage = {
+              messageText: message.message,
+              mediaUrls: message.mediaUrl,
+            };
+          }
+        })
+      );
   }
 }

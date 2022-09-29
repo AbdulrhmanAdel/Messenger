@@ -24,7 +24,7 @@
         </div>
 
         <div class="conversation-last-message">
-          {{ conversation.lastMessage }}
+          {{ conversation.lastMessage?.messageText ?? "Attachment" }}
         </div>
         <div></div>
       </div>

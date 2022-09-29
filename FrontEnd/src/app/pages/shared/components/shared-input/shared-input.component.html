@@ -1,0 +1,15 @@
+<div class="container {{ elementRef.nativeElement.className }}">
+  <input
+    #inputElement
+    class="input"
+    type="text"
+    [placeholder]="placeholder ?? ''"
+    (input)="
+      input.emit(inputElement.value); valueChange.emit(inputElement.value)
+    "
+    [value]="value ?? ''"
+    (keyup.enter)="enterPressed.emit()"
+    (focus)="focus.emit()"
+    (blur)="blur.emit()"
+  />
+</div>

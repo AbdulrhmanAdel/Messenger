@@ -31,16 +31,16 @@
       <p class="message-text">{{ conversationMessage.message }}</p>
     </div>
   </div>
-  <div class="send-message-container">
-    <input
-      class="send-message flex-grow-1"
-      type="text"
-      placeholder="Aa"
-      (keyup.enter)="sendMessage(message.value); message.value = ''"
-      #message
-    />
+  <div class="d-flex align-items-center">
+    <app-shared-input
+      class="flex-grow-1"
+      (enterPressed)="sendMessage()"
+      [placeholder]="'Aa'"
+      [(value)]="messageText"
+    >
+    </app-shared-input>
 
-    <mat-icon (click)="sendMessage(message.value); message.value = ''"
+    <mat-icon class="send-message-trigger" (click)="sendMessage()"
       >send</mat-icon
     >
   </div>

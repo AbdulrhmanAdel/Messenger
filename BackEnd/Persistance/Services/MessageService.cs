@@ -38,7 +38,8 @@ public class MessageService : BaseService, IMessageService
         message.SenderId = _currentUserContext.UserId;
 
         await _messages.InsertOneAsync(message);
-
+        await _conversationService.SetLastMessageAsync(message);
+        
         var conParticipants =
             await _conversationService.GetConversationParticipantsAsync(postMessageDto.ConversationId);
         return new ServiceResultWithData<CreatedMessageModel>()
@@ -62,7 +63,7 @@ public class MessageService : BaseService, IMessageService
             .Find(m => m.ConversationId == query.ConversationId)
             .SortByDescending(p => p.Created)
             .ToPagedResultAsync(query);
-
+        
         return messages;
     }
 }

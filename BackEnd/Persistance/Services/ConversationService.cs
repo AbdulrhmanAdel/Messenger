@@ -5,7 +5,6 @@ using Core.Models.Shared.Requests;
 using Core.Models.Shared.ServiceResult;
 using Core.Services;
 using Core.Services.Identity.User;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using Persistance.Extensions;
 
@@ -28,8 +27,18 @@ public class ConversationService : BaseService, IConversationService
     public async Task<PagedServiceResult<ConversationEntity>> GetPagedListAsync(PagedQueryModel pagedQueryModel)
     {
         var filter = Builders<ConversationEntity>.Filter.Eq("participants._id", _currentUserContext.UserId);
-        return await _conversations.Find(filter).ToPagedResultAsync(pagedQueryModel);
+
+        return await _conversations.Find(filter).SortByDescending(c => c.Edited).ToPagedResultAsync(pagedQueryModel);
     }
+
+    public async Task<ServiceResultWithData<ConversationEntity>> GetByIdAsync(Guid id)
+    {
+        var filter = Builders<ConversationEntity>.Filter.Eq("participants._id", _currentUserContext.UserId) &
+                     Builders<ConversationEntity>.Filter.Eq(p => p.Id, id);
+
+        return ReturnSuccess(await _conversations.Find(filter).FirstOrDefaultAsync());
+    }
+
 
     public async Task<ServiceResultWithData<ConversationEntity>> CreateConversationAsync(
         CreateConversationDto createConversationDto)
@@ -69,6 +78,7 @@ public class ConversationService : BaseService, IConversationService
         };
 
         await _conversations.InsertOneAsync(conversation);
+
         return ReturnSuccess(conversation);
     }
 
@@ -85,6 +95,19 @@ public class ConversationService : BaseService, IConversationService
         return await _conversations.Find(Builders<ConversationEntity>.Filter.Eq(c => c.Id, conversationId))
             .Project(c => c.Participants.Select(p => p.Id))
             .FirstOrDefaultAsync();
+    }
+
+    public async Task SetLastMessageAsync(MessageEntity messageEntity)
+    {
+        var filter = Builders<ConversationEntity>.Filter.Eq(p => p.Id, messageEntity.ConversationId);
+
+        var update = Builders<ConversationEntity>.Update.Set(p => p.LastMessage, new ConversationEmbeddedMessage()
+        {
+            MessageText = messageEntity.Message,
+            MediaUrls = messageEntity.MediaUrls
+        }).Set(m => m.Edited, DateTime.UtcNow);
+
+        await _conversations.UpdateOneAsync(filter, update);
     }
 
 

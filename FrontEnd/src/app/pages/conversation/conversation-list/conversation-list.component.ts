@@ -65,13 +65,14 @@ export class ConversationListComponent implements OnInit {
   }
 
   conversationClicked(conversation: ConversationModel) {
-    if (
-      this.currentActiveConversation &&
-      this.currentActiveConversation.id == conversation.id
-    )
-      return;
-
     this.selectedConversation.emit(conversation);
+    if (!this.currentActiveConversation) {
+      this.currentActiveConversation = conversation;
+      return;
+    }
+
+    if (this.currentActiveConversation.id == conversation.id) return;
+
     this.currentActiveConversation.active = false;
     this.currentActiveConversation = conversation;
     this.currentActiveConversation.active = true;

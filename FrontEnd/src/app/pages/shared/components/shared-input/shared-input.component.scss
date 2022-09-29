@@ -1,0 +1,17 @@
+.container {
+  padding: 5px 8px;
+  margin: 5px;
+  display: flex;
+  justify-content: space-between;
+  outline: none;
+  border: none;
+  border-radius: 20px;
+  background-color: #f3f3f5;
+}
+
+.input {
+  outline: none;
+  border: none;
+  background-color: transparent;
+  width: 100%;
+}

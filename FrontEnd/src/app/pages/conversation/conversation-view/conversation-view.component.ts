@@ -21,6 +21,8 @@ import { ConversationActions } from '../../../core/store/conversations/conversat
 export class ConversationViewComponent implements OnInit {
   isConversationStarted: boolean = false;
   selectedConversationModel: ConversationModel;
+
+  messageText: string;
   @Input() set conversationModel(value: ConversationModel) {
     this.isConversationStarted = true;
     if (
@@ -82,14 +84,16 @@ export class ConversationViewComponent implements OnInit {
       .subscribe();
   }
 
-  sendMessage(message: string) {
-    if (!message) return;
+  sendMessage() {
+    if (!this.messageText) return;
 
     this.store.dispatch(
       new ConversationActions.SendNewConversationMessage({
         conversationId: this.selectedConversationModel.id,
-        message,
+        message: this.messageText,
       })
     );
+
+    this.messageText = '';
   }
 }

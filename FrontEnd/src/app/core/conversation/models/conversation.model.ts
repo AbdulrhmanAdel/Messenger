@@ -1,12 +1,19 @@
-﻿import { ConversationParticipantModel } from './conversation-participant.model';
+﻿import {ConversationParticipantModel} from './conversation-participant.model';
+import {arrayToObject} from '../../../pages/shared/utils/array.utils';
 
-export interface ConversationModel {
+export class ConversationModel {
   id: string;
-  participants: ConversationParticipantModel[];
+  participants: { [key: string]: ConversationParticipantModel };
   created: Date;
   updated: Date;
   name: string;
   conversationType: number;
-  lastMessage: string;
+  lastMessage: { messageText?: string, mediaUrls?: any[] };
   active: boolean;
+
+  constructor(obj: any) {
+    Object.assign(this, obj);
+
+    this.participants = arrayToObject<any>(obj.participants, (p) => p.id);
+  }
 }

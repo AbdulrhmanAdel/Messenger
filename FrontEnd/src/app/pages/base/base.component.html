@@ -1,6 +1,6 @@
 <div class="d-flex h-100vh" (focus)="searchFocused = false">
-  <div class="d-flex flex-column px-2">
-    <div class="my-2">
+  <div class="w-20 d-flex flex-column px-2">
+    <div class="d-flex align-items-center my-2">
       <img
         class="user-settings"
         appProfileImage
@@ -10,24 +10,27 @@
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="logout()">Log Out</button>
       </mat-menu>
+
+      <h1 class="m-i-s-1">Messenger</h1>
     </div>
     <div class="my-1">
-      <input
-        id="search"
+      <app-shared-input
+        (input)="search$.next($event)"
         (focus)="searchFocused = true"
         (blur)="searchFocused = false"
-      />
+        placeholder="Search Messenger"
+      ></app-shared-input>
     </div>
     <div *ngIf="searchFocused"></div>
     <app-conversation-list
       [hideConversations]="searchFocused"
-      (selectedConversation)="conversation = $event"
+      (selectedConversation)="selectedConversation = $event"
     ></app-conversation-list>
   </div>
-  <div class="w-50">
+  <div class="w-80">
     <app-conversation-view
-      *ngIf="conversation"
-      [conversationModel]="conversation"
+      *ngIf="selectedConversation"
+      [conversationModel]="selectedConversation"
     ></app-conversation-view>
   </div>
   <!--  <div class="w-25">-->
@@ -35,3 +38,4 @@
   <!--    <button (click)="send(inputElement.value)">Send</button>-->
   <!--  </div>-->
 </div>
+<audio #audioElement src="../src/assets/media/new-message.mp3" hidden></audio>
