@@ -1,47 +1,93 @@
-<div class="conversation-view-container">
-  <div class="conversation-details-container">
-    <div class="">
-      {{ selectedConversationModel | resolveConversationName: loggedInUser.id }}
-    </div>
-  </div>
-  <div class="conversation-messages-container" #messageContainer>
+<div class="d-flex conversation-view-container">
+  <div class="d-flex flex-column flex-grow-1">
     <div
-      *ngIf="conversationData && conversationData.length && conversationData"
+      class="conversation-details-container d-flex justify-content-between align-items-center"
     >
-      <button>Load More Messages</button>
-    </div>
-    <div
-      *ngFor="let conversationMessage of conversationData"
-      class="d-flex"
-      [ngClass]="
-        conversationMessage.senderId === loggedInUser.id
-          ? 'sent-message'
-          : 'received-message'
-      "
-    >
-      <img
-        *ngIf="conversationMessage.senderId !== loggedInUser.id"
-        appProfileImage
-        circular
-        [src]="
-          selectedConversationModel
-            | resolveMessageOwnerImage: conversationMessage.senderId
-        "
-      />
-      <p class="message-text">{{ conversationMessage.message }}</p>
-    </div>
-  </div>
-  <div class="d-flex align-items-center">
-    <app-shared-input
-      class="flex-grow-1"
-      (enterPressed)="sendMessage()"
-      [placeholder]="'Aa'"
-      [(value)]="messageText"
-    >
-    </app-shared-input>
+      <div class="">
+        <img class="user-settings" appProfileImage circular />
+        {{
+          selectedConversationModel | resolveConversationName: loggedInUserInfo.id
+        }}
+      </div>
 
-    <mat-icon class="send-message-trigger" (click)="sendMessage()"
-      >send</mat-icon
-    >
+      <div class="d-flex justify-content-between align-items-center">
+        <div
+          (click)="showConversationDetails = !showConversationDetails"
+          class="icon"
+        >
+          <mat-icon>more_horiz</mat-icon>
+        </div>
+      </div>
+    </div>
+
+    <div class="conversation-messages-container flex-grow-1" #messageContainer>
+      <!--      <div *ngIf="groupedMessages">-->
+      <!--        <button>Load More Messages</button>-->
+      <!--      </div>-->
+
+      <div *ngFor="let group of conversationMessage" class="d-flex flex-column">
+        <div
+          class="d-flex justify-content-center align-items-center flex-grow-1"
+        >
+          {{ group.created | date: "EEE hh:mm" }}
+        </div>
+
+        <div *ngFor="let senderMessages of group.groupedMessages" class="d-flex flex-column">
+          <div
+            class="d-flex message"
+            *ngFor="let messageInfo of senderMessages.messages; let i = index"
+            [ngClass]="
+              senderMessages.senderId === loggedInUserInfo.id
+                ? 'sent-message'
+                : 'received-message'
+            "
+            [class.first-message]="i === 0"
+          >
+            <div
+              *ngIf="senderMessages.senderId !== loggedInUserInfo.id"
+              class="m-i-e-1"
+              style="width: 35px"
+            >
+              <img
+                *ngIf="i === senderMessages.messages.length - 1"
+                appProfileImage
+                circular
+                [imageWidth]="30"
+                [src]="
+                  selectedConversationModel
+                    | resolveMessageOwnerImage: senderMessages.senderId
+                "
+              />
+            </div>
+
+            <span class="message-text">{{ messageInfo.message }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex align-items-center">
+      <app-shared-input
+        class="flex-grow-1"
+        (enterPressed)="sendMessage()"
+        [placeholder]="'Aa'"
+        [(value)]="messageText"
+      >
+      </app-shared-input>
+
+      <div (click)="sendMessage()" class="m-i-s-1 icon">
+        <mat-icon>send</mat-icon>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="showConversationDetails"
+    class="d-flex flex-column justify-content-start align-items-center w-25 py-5"
+  >
+    <img class="user-settings" appProfileImage circular />
+
+    <div class="">
+      {{ selectedConversationModel | resolveConversationName: loggedInUserInfo.id }}
+    </div>
   </div>
 </div>

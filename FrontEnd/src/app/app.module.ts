@@ -25,6 +25,7 @@ import { ErrorInterceptor } from './core/shared/interceptors/error.interceptor';
 import { ConversationState } from './core/store/conversations/conversation.state';
 import {MatIconModule} from "@angular/material/icon";
 import { ResolveMessageOwnerImagePipe } from './pages/conversation/pipes/resolve-message-owner-image.pipe';
+import {InfiniteScrollModule} from "ngx-infinite-scroll";
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { ResolveMessageOwnerImagePipe } from './pages/conversation/pipes/resolve
         SharedModule,
         ConversationCoreModule,
         MatIconModule,
+        InfiniteScrollModule,
     ],
   providers: [
     {

@@ -20,11 +20,13 @@ export class ConversationListComponent implements OnInit {
   // Store
   @Select((state) => state.conversations.conversationList)
   conversations$: Observable<ConversationModel[]>;
+
   @Select((state) => state.conversations.hasMoreData)
   hasMoreConversations$: Observable<boolean>;
 
   loggedInUser: any;
   private _unsubscribe = new Subject<void>();
+
   constructor(private store: Store) {}
 
   ngOnInit(): void {
@@ -46,7 +48,8 @@ export class ConversationListComponent implements OnInit {
   }
 
   currentPage = 1;
-  pageSize = 1;
+  pageSize = 20;
+
   loadNextPage() {
     this.currentPage += 1;
     this.loadConversations();

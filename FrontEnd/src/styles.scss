@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -8,7 +9,6 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
-
 
 .w-20 {
   width: 20%;
@@ -32,4 +32,17 @@ body {
 
 .m-i-s-1 {
   margin-inline-start: 5px;
+}
+
+.icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 5px;
+
+  &:hover {
+    background-color: #c2c2c2;
+  }
 }

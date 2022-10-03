@@ -1,9 +1,6 @@
 .conversation-view-container {
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   border-left: 1px solid gray;
   border-right: 1px solid gray;
 }
@@ -11,18 +8,24 @@
 .conversation-details-container {
   width: 100%;
   padding: 5px;
-  border-bottom: 1px solid gray;
-  display: flex;
-  align-items: end;
+  //border-bottom: 1px solid gray;
+  box-shadow: 0 0 8px grey;
 }
 
 .conversation-messages-container {
+  //width: 100%;
   padding: 5px;
   overflow-y: auto;
 }
 .message-text {
   padding: 5px 10px;
   border-radius: 20px;
+  max-width: 50%;
+  word-break: break-word;
+}
+
+.message {
+  margin-bottom: 2px;
 }
 .sent-message {
   justify-content: end;
@@ -38,4 +41,9 @@
   .message-text {
     background-color: #e4e6eb;
   }
+}
+
+.first-message {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }

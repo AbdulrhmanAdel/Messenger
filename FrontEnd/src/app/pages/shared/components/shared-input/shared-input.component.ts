@@ -19,9 +19,9 @@ export class SharedInputComponent implements OnInit {
   @Output() focus = new EventEmitter<void>();
   @Output() blur = new EventEmitter<void>();
 
-  @Input() placeholder: string;
+  @Input() placeholder: string | null | undefined;
 
-  @Input() value: string;
+  @Input() value: string | null | undefined;
   @Output() valueChange = new EventEmitter<string>();
 
   constructor(public elementRef: ElementRef) {}

@@ -6,12 +6,13 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
-import { MessageService } from '../../../core/conversation/services/message.service';
-import { Store } from '@ngxs/store';
-import { Subject, takeUntil, tap } from 'rxjs';
-import { AuthState } from '../../../core/store/auth/auth.state';
 import { ConversationModel } from '../../../core/conversation';
+import { Store } from '@ngxs/store';
+import { Subject, Subscription, takeUntil, tap } from 'rxjs';
+import { AuthState } from '../../../core/store/auth/auth.state';
 import { ConversationActions } from '../../../core/store/conversations/conversation.actions';
+import { MessageState } from '../../../core/store/messages/message.state';
+import { MessageActions } from '../../../core/store/messages/message.actions';
 
 @Component({
   selector: 'app-conversation-view',
@@ -19,59 +20,58 @@ import { ConversationActions } from '../../../core/store/conversations/conversat
   styleUrls: ['./conversation-view.component.scss'],
 })
 export class ConversationViewComponent implements OnInit {
-  isConversationStarted: boolean = false;
   selectedConversationModel: ConversationModel;
-
-  messageText: string;
   @Input() set conversationModel(value: ConversationModel) {
-    this.isConversationStarted = true;
-    if (
-      this.selectedConversationModel &&
-      this.selectedConversationModel.id == value.id
-    ) {
-      return;
-    }
-
-    this.selectedConversationModel = value;
-    this.refreshMessages();
+    this.selectedConversationChanged(value);
   }
 
-  loggedInUser: any;
-  messages: string[];
-  conversationData: { message?: string; senderId: string }[];
+  loggedInUserInfo: { id: string };
+
+  conversationMessage: {
+    created: any;
+    groupedMessages: { senderId: string; messages: any[] }[];
+  }[];
+  showConversationDetails: boolean = false;
+
+  messageText: string;
 
   @ViewChild('messageContainer') messageContainer: ElementRef;
+
+  // Clean Up
   private _unsubscribe = new Subject<void>();
-  constructor(
-    private store: Store,
-    private renderer: Renderer2,
-    private messageService: MessageService
-  ) {}
+  private messagesInStoreSubscription: Subscription;
+  constructor(private store: Store, private renderer: Renderer2) {}
 
   ngOnInit(): void {
     this.store
       .select(AuthState.loggedInUserData)
       .pipe(
         takeUntil(this._unsubscribe),
-        tap((result) => (this.loggedInUser = result))
+        tap((result) => (this.loggedInUserInfo = result))
       )
       .subscribe();
 
-    this.refreshMessages();
+    this.loadMessages();
+    this.listenForMessages();
   }
 
-  refreshMessages() {
-    this.messageService
-      .getPagedList({
-        conversationId: this.selectedConversationModel.id,
-        pageSize: 30,
-        currentPage: 1,
-      })
-      .pipe(
-        tap((result) => {
-          this.conversationData = result.data;
+  loadMessages() {
+    if (this.selectedConversationModel?.id) {
+      this.store.dispatch(
+        new MessageActions.LoadConversationMessages(
+          this.selectedConversationModel.id
+        )
+      );
+    }
+  }
 
-          // Wait till dom updated with messages
+  private listenForMessages() {
+    this.messagesInStoreSubscription = this.store
+      .select(MessageState.conversationMessages)
+      .pipe(
+        takeUntil(this._unsubscribe),
+        tap((result) => {
+          // Wait till dom updated with messages then scroll down
           setTimeout(() => {
             this.renderer.setProperty(
               this.messageContainer.nativeElement,
@@ -82,6 +82,18 @@ export class ConversationViewComponent implements OnInit {
         })
       )
       .subscribe();
+  }
+
+  selectedConversationChanged(newSelectedConversation: ConversationModel) {
+    if (
+      this.selectedConversationModel &&
+      this.selectedConversationModel.id == newSelectedConversation.id
+    ) {
+      return;
+    }
+
+    this.selectedConversationModel = newSelectedConversation;
+    this.loadMessages();
   }
 
   sendMessage() {

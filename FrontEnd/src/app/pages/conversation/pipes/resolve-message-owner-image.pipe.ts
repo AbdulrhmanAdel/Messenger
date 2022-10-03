@@ -7,6 +7,6 @@ import { ConversationModel } from '../../../core/conversation';
 })
 export class ResolveMessageOwnerImagePipe implements PipeTransform {
   transform(conversationModel: ConversationModel, senderId: string): unknown {
-    return conversationModel.participants[senderId];
+    return conversationModel.participants[senderId]?.profilePicture;
   }
 }

@@ -6,6 +6,7 @@
         appProfileImage
         circular
         [matMenuTriggerFor]="menu"
+        [src]="loggedInUser?.profilePicture"
       />
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="logout()">Log Out</button>
@@ -13,15 +14,19 @@
 
       <h1 class="m-i-s-1">Messenger</h1>
     </div>
-    <div class="my-1">
+    <div class="d-flex align-items-center my-1">
+      <span *ngIf="searchFocused" class="icon">
+        <mat-icon>arrow_back</mat-icon>
+      </span>
       <app-shared-input
+        class="flex-grow-1"
         (input)="search$.next($event)"
         (focus)="searchFocused = true"
         (blur)="searchFocused = false"
         placeholder="Search Messenger"
       ></app-shared-input>
     </div>
-    <div *ngIf="searchFocused"></div>
+    <div class="flex-grow-1" *ngIf="searchFocused"></div>
     <app-conversation-list
       [hideConversations]="searchFocused"
       (selectedConversation)="selectedConversation = $event"
@@ -33,9 +38,5 @@
       [conversationModel]="selectedConversation"
     ></app-conversation-view>
   </div>
-  <!--  <div class="w-25">-->
-  <!--    <input #inputElement />-->
-  <!--    <button (click)="send(inputElement.value)">Send</button>-->
-  <!--  </div>-->
 </div>
 <audio #audioElement src="../src/assets/media/new-message.mp3" hidden></audio>
