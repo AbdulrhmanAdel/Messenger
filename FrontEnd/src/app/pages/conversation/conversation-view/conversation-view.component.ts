@@ -20,17 +20,19 @@ import { MessageActions } from '../../../core/store/messages/message.actions';
   styleUrls: ['./conversation-view.component.scss'],
 })
 export class ConversationViewComponent implements OnInit {
+  console = console;
   selectedConversationModel: ConversationModel;
-  @Input() set conversationModel(value: ConversationModel) {
+  @Input() set selectedConversation(value: ConversationModel) {
     this.selectedConversationChanged(value);
   }
 
   loggedInUserInfo: { id: string };
 
-  conversationMessage: {
+  conversationMessages: {
     created: any;
     groupedMessages: { senderId: string; messages: any[] }[];
   }[];
+
   showConversationDetails: boolean = false;
 
   messageText: string;
@@ -52,7 +54,7 @@ export class ConversationViewComponent implements OnInit {
       .subscribe();
 
     this.loadMessages();
-    this.listenForMessages();
+    this.listenForMessagesChanges();
   }
 
   loadMessages() {
@@ -65,12 +67,14 @@ export class ConversationViewComponent implements OnInit {
     }
   }
 
-  private listenForMessages() {
+  private listenForMessagesChanges() {
     this.messagesInStoreSubscription = this.store
       .select(MessageState.conversationMessages)
       .pipe(
         takeUntil(this._unsubscribe),
         tap((result) => {
+          this.conversationMessages = result;
+
           // Wait till dom updated with messages then scroll down
           setTimeout(() => {
             this.renderer.setProperty(
@@ -103,9 +107,12 @@ export class ConversationViewComponent implements OnInit {
       new ConversationActions.SendNewConversationMessage({
         conversationId: this.selectedConversationModel.id,
         message: this.messageText,
+        senderId: this.loggedInUserInfo.id,
       })
     );
 
     this.messageText = '';
   }
+
+  loadNextPage() {}
 }

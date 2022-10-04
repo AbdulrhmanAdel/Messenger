@@ -4,56 +4,32 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { BaseComponent } from './pages/base/base.component';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { AuthorizationInterceptor } from './core/shared/interceptors/authorization.intceptor';
 import { AuthCoreModule } from './core/auth/auth-core.module';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { NgxsModule } from '@ngxs/store';
 import { AuthState } from './core/store/auth/auth.state';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
-import { MatInputModule } from '@angular/material/input';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { UserCoreModule } from './core/user/user-core.module';
-import { MatMenuModule } from '@angular/material/menu';
-import { SharedModule } from './pages/shared/shared.module';
-import { ConversationListComponent } from './pages/conversation/conversation-list/conversation-list.component';
-import { ResolveConversationNamePipe } from './pages/conversation/pipes/conversation-name.pipe';
-import { ConversationViewComponent } from './pages/conversation/conversation-view/conversation-view.component';
-import { ConversationCoreModule } from './core/conversation/conversation-core.module';
+
+// Http
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { AuthorizationInterceptor } from './core/shared/interceptors/authorization.intceptor';
 import { ErrorInterceptor } from './core/shared/interceptors/error.interceptor';
-import { ConversationState } from './core/store/conversations/conversation.state';
-import {MatIconModule} from "@angular/material/icon";
-import { ResolveMessageOwnerImagePipe } from './pages/conversation/pipes/resolve-message-owner-image.pipe';
-import {InfiniteScrollModule} from "ngx-infinite-scroll";
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    BaseComponent,
-    ConversationListComponent,
-    ResolveConversationNamePipe,
-    ConversationViewComponent,
-    ResolveMessageOwnerImagePipe,
+  declarations: [AppComponent],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    AuthCoreModule,
+    UserCoreModule,
+
+    MatSnackBarModule,
+    NgxsModule.forRoot([AuthState]),
+    NgxsReduxDevtoolsPluginModule.forRoot(),
   ],
-    imports: [
-        BrowserModule,
-        HttpClientModule,
-        AuthCoreModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        MatSnackBarModule,
-        NgxsModule.forRoot([AuthState, ConversationState]),
-        NgxsReduxDevtoolsPluginModule.forRoot(),
-        MatInputModule,
-        MatAutocompleteModule,
-        UserCoreModule,
-        MatMenuModule,
-        SharedModule,
-        ConversationCoreModule,
-        MatIconModule,
-        InfiniteScrollModule,
-    ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,

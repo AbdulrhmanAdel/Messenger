@@ -9,12 +9,15 @@ const routes: Routes = [
     loadChildren: () =>
       import('./pages/auth/auth.module').then((m) => m.AuthModule),
   },
-
   {
     path: '',
     canActivate: [AuthGuard],
-    component: BaseComponent,
-    children: [],
+    loadChildren: () =>
+      import('./pages/base/base.module').then((m) => m.BaseModule),
+  },
+  {
+    path: '**',
+    redirectTo: '',
   },
 ];
 

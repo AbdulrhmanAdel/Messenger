@@ -13,6 +13,7 @@ export namespace ConversationActions {
       public conversationMessage: {
         conversationId: string;
         message: string;
+        senderId: string;
       }
     ) {}
   }

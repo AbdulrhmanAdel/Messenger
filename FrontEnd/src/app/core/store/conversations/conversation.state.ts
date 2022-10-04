@@ -8,12 +8,12 @@ import {
 import { map, Observable, of, switchMap, tap } from 'rxjs';
 import produce from 'immer';
 import {
-  MessageService,
   ConversationService,
   ConversationModel,
 } from '../../conversation';
 import { sortBy } from 'lodash';
 import { AudioPlayerService } from '../../shared/services/audio-player.service';
+import {MessageService} from "../../messages/services/message.service";
 
 @State<ConversationStateModel>({
   name: 'conversations',

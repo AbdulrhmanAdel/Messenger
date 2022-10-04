@@ -6,7 +6,8 @@
       <div class="">
         <img class="user-settings" appProfileImage circular />
         {{
-          selectedConversationModel | resolveConversationName: loggedInUserInfo.id
+          selectedConversationModel
+            | resolveConversationName: loggedInUserInfo.id
         }}
       </div>
 
@@ -20,19 +21,32 @@
       </div>
     </div>
 
-    <div class="conversation-messages-container flex-grow-1" #messageContainer>
+    <div
+      class="conversation-messages-container flex-grow-1"
+      #messageContainer
+      infiniteScroll
+      [scrollWindow]="false"
+      [alwaysCallback]="true"
+      (scrolledUp)="loadNextPage()"
+    >
       <!--      <div *ngIf="groupedMessages">-->
       <!--        <button>Load More Messages</button>-->
       <!--      </div>-->
 
-      <div *ngFor="let group of conversationMessage" class="d-flex flex-column">
+      <div
+        *ngFor="let group of conversationMessages"
+        class="d-flex flex-column"
+      >
         <div
           class="d-flex justify-content-center align-items-center flex-grow-1"
         >
           {{ group.created | date: "EEE hh:mm" }}
         </div>
 
-        <div *ngFor="let senderMessages of group.groupedMessages" class="d-flex flex-column">
+        <div
+          *ngFor="let senderMessages of group.groupedMessages"
+          class="d-flex flex-column"
+        >
           <div
             class="d-flex message"
             *ngFor="let messageInfo of senderMessages.messages; let i = index"
@@ -87,7 +101,9 @@
     <img class="user-settings" appProfileImage circular />
 
     <div class="">
-      {{ selectedConversationModel | resolveConversationName: loggedInUserInfo.id }}
+      {{
+        selectedConversationModel | resolveConversationName: loggedInUserInfo.id
+      }}
     </div>
   </div>
 </div>

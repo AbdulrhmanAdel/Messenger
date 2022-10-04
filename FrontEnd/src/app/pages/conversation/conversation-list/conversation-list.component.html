@@ -1,8 +1,9 @@
-<div class="w-100" [style.display]="hideConversations ? 'none' : 'block'">
+<div
+  class="overflow-auto w-100"
+  [style.display]="hideConversations ? 'none' : 'block'"
+>
   <div
     class="conversation-item my-2 w-100"
-    infiniteScroll
-    (scrolled)="loadNextPage()"
     [class.conversation-active]="conversation == currentActiveConversation"
     *ngFor="let conversation of conversations$ | async"
     (click)="conversationClicked(conversation)"

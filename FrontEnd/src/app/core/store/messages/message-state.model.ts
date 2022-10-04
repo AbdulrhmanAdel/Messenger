@@ -11,5 +11,5 @@
 
 export class GroupedMessage {
   senderId: string;
-  messages: { message: string }[];
+  messages: { message?: string }[];
 }

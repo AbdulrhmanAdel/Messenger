@@ -5,11 +5,12 @@ import { SharedInputComponent } from './components/shared-input/shared-input.com
 import { SharedHoverEffectDirective } from './directives/shared-hover-effect.directive';
 
 @NgModule({
-  declarations: [ProfileImageDirective, SharedInputComponent, SharedHoverEffectDirective],
+  declarations: [
+    ProfileImageDirective,
+    SharedInputComponent,
+    SharedHoverEffectDirective,
+  ],
   imports: [CommonModule],
-    exports: [
-        ProfileImageDirective,
-        SharedInputComponent
-    ]
+  exports: [ProfileImageDirective, SharedInputComponent],
 })
 export class SharedModule {}
