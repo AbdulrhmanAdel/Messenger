@@ -5,9 +5,9 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import {RealtimeChatService} from '../../core/shared/services/realtime/realtime-chat.service';
-import {Store} from '@ngxs/store';
-import {AuthActions} from '../../core/store/auth';
+import { RealtimeChatService } from '../../core/shared/services/realtime/realtime-chat.service';
+import { Store } from '@ngxs/store';
+import { AuthActions } from '../../core/store/auth';
 import {
   debounceTime,
   fromEvent,
@@ -16,12 +16,12 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import {Router} from '@angular/router';
-import {UserService} from '../../core/user/user.service';
-import {ConversationModel} from '../../core/conversation';
-import {Immer} from 'immer';
-import {AudioPlayerService} from '../../core/shared/services/audio-player.service';
-import {AuthState} from "../../core/store/auth/auth.state";
+import { Router } from '@angular/router';
+import { UserService } from '../../core/user/user.service';
+import { ConversationModel } from '../../core/conversation';
+import { Immer } from 'immer';
+import { AudioPlayerService } from '../../core/shared/services/audio-player.service';
+import { AuthState } from '../../core/store/auth/auth.state';
 
 @Component({
   selector: 'app-base',
@@ -46,8 +46,7 @@ export class BaseComponent implements OnInit, OnDestroy {
     private router: Router,
     private userService: UserService,
     private audioPlayService: AudioPlayerService
-  ) {
-  }
+  ) {}
 
   async ngOnInit(): Promise<void> {
     await this.chatService.connect();
@@ -58,7 +57,6 @@ export class BaseComponent implements OnInit, OnDestroy {
         tap((result) => (this.loggedInUser = result))
       )
       .subscribe();
-
 
     this.audioPlayService.playMessageRequested$
       .pipe(

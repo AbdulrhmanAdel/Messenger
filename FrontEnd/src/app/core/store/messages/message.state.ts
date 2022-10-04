@@ -99,7 +99,7 @@ export class MessageState {
         }
       } else {
         draft.activeConversationMessages.push({
-          created: currentDate.toString(),
+          created: currentDate.toISOString(),
           groupedMessages: [
             {
               senderId: conversationMessage.senderId,

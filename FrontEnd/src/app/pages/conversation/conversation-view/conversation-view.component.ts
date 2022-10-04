@@ -121,7 +121,7 @@ export class ConversationViewComponent implements OnInit {
     const createdDate = moment(created);
 
     if (createdDate.isSame(moment(), 'day')) {
-      return ' hh:mm';
+      return 'hh:mm';
     }
     return 'EEE hh:mm';
   }
