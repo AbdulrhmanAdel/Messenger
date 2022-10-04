@@ -13,6 +13,7 @@ import { AuthState } from '../../../core/store/auth/auth.state';
 import { ConversationActions } from '../../../core/store/conversations/conversation.actions';
 import { MessageState } from '../../../core/store/messages/message.state';
 import { MessageActions } from '../../../core/store/messages/message.actions';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-conversation-view',
@@ -115,4 +116,13 @@ export class ConversationViewComponent implements OnInit {
   }
 
   loadNextPage() {}
+
+  calculateCreatedFormat(created: any) {
+    const createdDate = moment(created);
+
+    if (createdDate.isSame(moment(), 'day')) {
+      return ' hh:mm';
+    }
+    return 'EEE hh:mm';
+  }
 }
