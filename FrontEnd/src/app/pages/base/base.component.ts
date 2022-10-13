@@ -31,6 +31,7 @@ import { AuthState } from '../../core/store/auth/auth.state';
 export class BaseComponent implements OnInit, OnDestroy {
   // Search
   search$ = new Subject<string>();
+  searchValue = '';
   searchFocused: boolean;
   searchUserResult: any[];
   selectedConversation: ConversationModel;

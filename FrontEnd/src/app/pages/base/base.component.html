@@ -19,10 +19,12 @@
         <mat-icon>arrow_back</mat-icon>
       </span>
       <app-shared-input
+        #input
         class="flex-grow-1"
         (input)="search$.next($event)"
         (focus)="searchFocused = true"
-        (blur)="searchFocused = false"
+        (blur)="searchFocused = false; searchValue = ''"
+        [(value)]="searchValue"
         placeholder="Search Messenger"
       ></app-shared-input>
     </div>
@@ -40,5 +42,5 @@
   </div>
 </div>
 <audio #audioElement hidden>
-  <source src="./assets/media/new-message.mp3" />
+  <source src="./assets/media/new-message.mp3"/>
 </audio>
