@@ -1,4 +1,5 @@
-﻿using Core.Services.Identity.User;
+﻿using Core.Models.Users;
+using Core.Services.Identity.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,18 +14,18 @@ public class UserController : BaseAppV1Controller
     {
         _userService = userService;
     }
-    
+
     [HttpGet("GetCurrentUserData")]
     public async Task<IActionResult> GetCurrentUserDataAsync()
     {
         var currentUser = await _userService.GetCurrentUserDataAsync();
         return ObjectResult(currentUser);
     }
-    
+
     [HttpGet("GetPagedList")]
-    public async Task<IActionResult> GetPagedListAsync()
+    public async Task<IActionResult> GetPagedListAsync([FromQuery] UsersPagedQueryModel queryModel)
     {
-        var users = await _userService.GetPagedListAsync();
+        var users = await _userService.GetPagedListAsync(queryModel);
         return PagedResult(users.Data, users.TotalCount);
     }
 }

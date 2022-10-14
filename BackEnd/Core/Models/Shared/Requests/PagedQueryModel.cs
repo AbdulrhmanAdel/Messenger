@@ -4,5 +4,5 @@ public class PagedQueryModel
 {
     public int CurrentPage { get; set; }
     public int PageSize { get; set; }
-    public Guid? Id { get; set; }
+    public string? SearchTerm { get; set; }
 }

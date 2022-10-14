@@ -1,15 +1,32 @@
 <div class="container {{ elementRef.nativeElement.className }}">
-  <input
-    #inputElement
+  <textarea
+    *ngIf="_multiline; else inputElementRef"
+    #textArea
     class="input"
     type="text"
     [placeholder]="placeholder ?? ''"
     (input)="
-      input.emit(inputElement.value); valueChange.emit(inputElement.value)
+      input.emit(textArea.value); valueChange.emit(textArea.value)
     "
     [value]="value ?? ''"
     (keyup.enter)="enterPressed.emit()"
     (focus)="focus.emit()"
     (blur)="blur.emit()"
-  />
+  ></textarea>
+
+  <ng-template #inputElementRef>
+    <input
+      #inputElement
+      class="input"
+      type="text"
+      [placeholder]="placeholder ?? ''"
+      (input)="
+        input.emit(inputElement.value); valueChange.emit(inputElement.value)
+      "
+      [value]="value ?? ''"
+      (keyup.enter)="enterPressed.emit()"
+      (focus)="focus.emit()"
+      (blur)="blur.emit()"
+    />
+  </ng-template>
 </div>

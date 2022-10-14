@@ -6,6 +6,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 @Component({
   selector: 'app-shared-input',
@@ -13,6 +14,11 @@ import {
   styleUrls: ['./shared-input.component.scss'],
 })
 export class SharedInputComponent implements OnInit {
+  _multiline: boolean;
+  @Input() set multiline(value: string) {
+    this._multiline = coerceBooleanProperty(value);
+  }
+
   @Output() input = new EventEmitter<string>();
   @Output() enterPressed = new EventEmitter<void>();
   @Output() focus = new EventEmitter<void>();

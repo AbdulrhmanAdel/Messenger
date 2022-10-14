@@ -109,20 +109,4 @@ public class ConversationService : BaseService, IConversationService
 
         await _conversations.UpdateOneAsync(filter, update);
     }
-
-
-    private async Task<bool> IsConversationAlreadyExistsAsync(IList<Guid> participants,
-        ConversationType conversationType)
-    {
-        //     if (conversationType == ConversationType.Private)
-        //     {
-        //         
-        //     }
-        //     var filter = Builders<ConversationEntity>.Filter.Size(p => p.Participants, participants.Count + 1);
-        //     participants.Select(id => Builders<ConversationEntity>.Filter.in)
-        //     Builders<ConversationEntity>.Filter.ElemMatch(m => m.Participants, p => par)
-        //     return _conversations.Find()
-
-        return true;
-    }
 }

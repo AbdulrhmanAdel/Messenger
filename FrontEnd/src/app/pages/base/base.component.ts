@@ -10,16 +10,15 @@ import { Store } from '@ngxs/store';
 import { AuthActions } from '../../core/store/auth';
 import {
   debounceTime,
-  fromEvent,
-  Observable,
+  distinctUntilChanged,
   Subject,
+  switchMap,
   takeUntil,
   tap,
 } from 'rxjs';
 import { Router } from '@angular/router';
 import { UserService } from '../../core/user/user.service';
 import { ConversationModel } from '../../core/conversation';
-import { Immer } from 'immer';
 import { AudioPlayerService } from '../../core/shared/services/audio-player.service';
 import { AuthState } from '../../core/store/auth/auth.state';
 
@@ -33,6 +32,8 @@ export class BaseComponent implements OnInit, OnDestroy {
   search$ = new Subject<string>();
   searchValue = '';
   searchFocused: boolean;
+  currentPage = 1;
+  pageSize = 30;
   searchUserResult: any[];
   selectedConversation: ConversationModel;
   loggedInUser: any;
@@ -66,16 +67,21 @@ export class BaseComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    this.search$.pipe(
-      debounceTime(300),
-      tap((result) => (this.searchUserResult = [{}]))
-    );
-
-    this.userService
-      .getPagedList()
+    this.search$
       .pipe(
-        takeUntil(this._unsubscribe),
-        tap((result) => (this.searchUserResult = result.data))
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((searchTerm) => {
+          return this.userService.getPagedList({
+            searchTerm: searchTerm,
+            currentPage: this.currentPage,
+            pageSize: this.pageSize,
+          });
+        }),
+        tap((result) => {
+          console.log(result);
+        }),
+        takeUntil(this._unsubscribe)
       )
       .subscribe();
   }

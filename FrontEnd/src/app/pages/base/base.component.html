@@ -19,7 +19,6 @@
         <mat-icon>arrow_back</mat-icon>
       </span>
       <app-shared-input
-        #input
         class="flex-grow-1"
         (input)="search$.next($event)"
         (focus)="searchFocused = true"

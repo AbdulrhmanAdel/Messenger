@@ -13,7 +13,8 @@ public static class AuthMappers
             Email = applicationUser.Email,
             FirstName = applicationUser.FirstName,
             IsVerified = applicationUser.IsVerified,
-            LastName = applicationUser.LastName
+            LastName = applicationUser.LastName,
+            FullName = applicationUser.FullName
         };
     }
 }

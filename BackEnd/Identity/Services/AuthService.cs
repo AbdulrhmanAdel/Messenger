@@ -62,7 +62,8 @@ public class AuthService : BaseService, IAuthService
             Email = registerDto.Credential,
             Password = PasswordHasher.HashPassword(registerDto.Password),
             FirstName = registerDto.FirstName,
-            LastName = registerDto.LastName
+            LastName = registerDto.LastName,
+            FullName = $"{registerDto.FirstName} {registerDto.LastName}"
         };
 
         await _userCollection.InsertOneAsync(user);
