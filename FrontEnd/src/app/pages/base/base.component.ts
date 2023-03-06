@@ -5,9 +5,9 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { RealtimeChatService } from '../../core/shared/services/realtime/realtime-chat.service';
-import { Store } from '@ngxs/store';
-import { AuthActions } from '../../core/store/auth';
+import {RealtimeChatService} from '../../core/shared/services/realtime/realtime-chat.service';
+import {Store} from '@ngxs/store';
+import {AuthActions} from '../../core/store/auth';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -16,11 +16,13 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { Router } from '@angular/router';
-import { UserService } from '../../core/user/user.service';
-import { ConversationModel } from '../../core/conversation';
-import { AudioPlayerService } from '../../core/shared/services/audio-player.service';
-import { AuthState } from '../../core/store/auth/auth.state';
+import {Router} from '@angular/router';
+import {UserService} from '../../core/user/user.service';
+import {ConversationModel} from '../../core/conversation';
+import {AudioPlayerService} from '../../core/shared/services/audio-player.service';
+import {AuthState} from '../../core/store/auth/auth.state';
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {UserPreferencesComponent} from "../user-preferences/user-preferences.component";
 
 @Component({
   selector: 'app-base',
@@ -47,8 +49,10 @@ export class BaseComponent implements OnInit, OnDestroy {
     private store: Store,
     private router: Router,
     private userService: UserService,
-    private audioPlayService: AudioPlayerService
-  ) {}
+    private audioPlayService: AudioPlayerService,
+    private dialogService: MatDialog
+  ) {
+  }
 
   async ngOnInit(): Promise<void> {
     await this.chatService.connect();
@@ -97,5 +101,9 @@ export class BaseComponent implements OnInit, OnDestroy {
       .dispatch(new AuthActions.LoggedOutRequested())
       .pipe(takeUntil(this._unsubscribe))
       .subscribe(() => this.router.navigateByUrl('auth/login'));
+  }
+
+  openPreference() {
+    this.dialogService.open(UserPreferencesComponent);
   }
 }

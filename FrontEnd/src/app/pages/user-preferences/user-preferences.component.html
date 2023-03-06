@@ -1,0 +1,32 @@
+<div class="preference-container position-relative">
+  <div [matDialogClose]="null" class="icon close-preference">
+    <mat-icon>arrow_back</mat-icon>
+  </div>
+  <div class="w-100 d-flex justify-content-center">
+    <span>Preferences</span>
+  </div>
+
+  <form [formGroup]="userForm" class="w-100 d-flex flex-column">
+    <div class="d-flex justify-content-center">
+      <mat-form-field>
+        <mat-label>FirstName</mat-label>
+        <input matInput formControlName="firstName" />
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>LastName</mat-label>
+        <input matInput formControlName="lastName" />
+      </mat-form-field>
+    </div>
+  </form>
+
+  <div class="w-100 d-flex justify-content-center">
+    <button
+      [disabled]="userForm.invalid || !userForm.dirty"
+      mat-flat-button
+      color="primary"
+    >
+      Save Changes
+    </button>
+  </div>
+</div>
